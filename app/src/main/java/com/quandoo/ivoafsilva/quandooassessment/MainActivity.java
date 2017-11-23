@@ -1,13 +1,16 @@
 package com.quandoo.ivoafsilva.quandooassessment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 
 import com.quandoo.ivoafsilva.quandooassessment.customerlist.CustomerModel;
 import com.quandoo.ivoafsilva.quandooassessment.network.QuandooService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -23,12 +26,12 @@ public class MainActivity extends AppCompatActivity {
     /**
      * The list of customers
      */
-    private List<CustomerModel> mCustomersList;
+    private ArrayList<CustomerModel> mCustomersList;
 
     /**
      * The list of reservations
      */
-    private List<Boolean> mTableReservations;
+    private ArrayList<Boolean> mTableReservations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<List<CustomerModel>> call, @NonNull Response<List<CustomerModel>> response) {
                 Log.d(TAG, "getCustomerList | onResponse");
 
-                mCustomersList = response.body();
+                mCustomersList = (ArrayList<CustomerModel>) response.body();
                 if (mCustomersList == null) {
                     Log.w(TAG, "getCustomerList returned NULL response");
                     return;
@@ -60,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<List<Boolean>> call, @NonNull Response<List<Boolean>> response) {
                 Log.d(TAG, "getTableReservationsList | onResponse");
-                mTableReservations = response.body();
+                mTableReservations = (ArrayList<Boolean>) response.body();
                 if (mTableReservations == null) {
                     Log.w(TAG, "getTableReservationsList returned NULL response");
                     return;
@@ -73,5 +76,17 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "getTableReservationsList | onFailure", t);
             }
         });
+    }
+
+    /**
+     * Method to show the Customers Activity
+     * @param view The view that was clicked
+     */
+    public void showCustomersActivity(View view) {
+        Intent intent = new Intent(MainActivity.this, CustomersActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(CustomersActivity.KEY_CUSTOMER_LIST, mCustomersList);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

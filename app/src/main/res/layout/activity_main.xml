@@ -12,18 +12,19 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="5dp">
+        android:padding="@dimen/default_padding">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="@string/btn_show_customers" />
+            android:padding="@dimen/default_padding"
+            android:text="@string/btn_show_customers"
+            android:onClick="showCustomersActivity"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:padding="@dimen/default_padding"
             android:text="@string/btn_show_reservations" />
     </LinearLayout>
 </LinearLayout>
