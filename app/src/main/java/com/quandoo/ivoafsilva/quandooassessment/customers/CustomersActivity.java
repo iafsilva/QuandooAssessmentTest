@@ -1,4 +1,4 @@
-package com.quandoo.ivoafsilva.quandooassessment;
+package com.quandoo.ivoafsilva.quandooassessment.customers;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,12 +7,15 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.quandoo.ivoafsilva.quandooassessment.customerlist.CustomerAdapter;
-import com.quandoo.ivoafsilva.quandooassessment.customerlist.CustomerModel;
+import com.quandoo.ivoafsilva.quandooassessment.R;
 
 import java.util.ArrayList;
 
 public class CustomersActivity extends AppCompatActivity {
+    /**
+     * Key to use when sending/retrieving a customer
+     */
+    public static final String KEY_CUSTOMER = "aCustomer";
     /**
      * Key to use when sending/retrieving the customers list from a bundle
      */

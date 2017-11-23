@@ -18,7 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CustomersActivity" />
+        <activity android:name=".customers.CustomersActivity" />
+        <activity android:name=".reservations.TableReservationActivity"></activity>
     </application>
 
 </manifest>

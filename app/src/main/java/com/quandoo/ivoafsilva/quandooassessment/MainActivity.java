@@ -7,7 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
-import com.quandoo.ivoafsilva.quandooassessment.customerlist.CustomerModel;
+import com.quandoo.ivoafsilva.quandooassessment.customers.CustomerModel;
+import com.quandoo.ivoafsilva.quandooassessment.customers.CustomersActivity;
 import com.quandoo.ivoafsilva.quandooassessment.network.QuandooService;
 
 import java.util.ArrayList;
@@ -59,23 +60,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        quandooService.getTableReservationsList().enqueue(new Callback<List<Boolean>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<Boolean>> call, @NonNull Response<List<Boolean>> response) {
-                Log.d(TAG, "getTableReservationsList | onResponse");
-                mTableReservations = (ArrayList<Boolean>) response.body();
-                if (mTableReservations == null) {
-                    Log.w(TAG, "getTableReservationsList returned NULL response");
-                    return;
-                }
-                Log.w(TAG, "getTableReservationsList" + mTableReservations.toString());
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<List<Boolean>> call, @NonNull Throwable t) {
-                Log.e(TAG, "getTableReservationsList | onFailure", t);
-            }
-        });
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.quandoo.ivoafsilva.quandooassessment.network;
 
 import com.quandoo.ivoafsilva.quandooassessment.BuildConfig;
-import com.quandoo.ivoafsilva.quandooassessment.customerlist.CustomerModel;
+import com.quandoo.ivoafsilva.quandooassessment.customers.CustomerModel;
 
 import java.util.List;
 

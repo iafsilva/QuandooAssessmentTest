@@ -1,14 +1,17 @@
-package com.quandoo.ivoafsilva.quandooassessment.customerlist;
+package com.quandoo.ivoafsilva.quandooassessment.customers;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.quandoo.ivoafsilva.quandooassessment.R;
+import com.quandoo.ivoafsilva.quandooassessment.reservations.TableReservationActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +29,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
      */
     public CustomerAdapter(List<CustomerModel> customerModelList) {
         mCustomerModelList = new ArrayList<>();
-        mCustomerModelList.addAll(customerModelList);
+        setCustomerModelList(customerModelList);
     }
 
     @Override
@@ -46,6 +49,20 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
     @Override
     public int getItemCount() {
         return mCustomerModelList.size();
+    }
+
+    /**
+     * Clears the current dataset and takes a copy of the given one
+     * @param customerList The new dataset to be copied
+     */
+    public void setCustomerModelList(List<CustomerModel> customerList){
+        if(customerList != null && customerList.size()> 0) {
+            int oldReservationsSize = mCustomerModelList.size();
+            mCustomerModelList.clear();
+            notifyItemRangeRemoved(0, oldReservationsSize);
+            mCustomerModelList.addAll(customerList);
+            notifyItemRangeInserted(0, customerList.size());
+        }
     }
 
     /**
@@ -84,6 +101,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
          * @param customer The customer's data to be bound
          */
         public void bindCustomer(CustomerModel customer) {
+            mTextViewId.setTag(customer);
             mTextViewId.setText(String.valueOf(customer.getId()));
             mTextViewFirstName.setText(customer.getCustomerFirstName());
             mTextViewLastName.setText(customer.getCustomerLastName());
@@ -96,7 +114,11 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
          */
         @Override
         public void onClick(View view) {
-            Toast.makeText(view.getContext(), "Clicked customer position: " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(view.getContext(), TableReservationActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(CustomersActivity.KEY_CUSTOMER, (Parcelable) mTextViewId.getTag());
+            intent.putExtras(bundle);
+            view.getContext().startActivity(intent);
         }
     }
 }
