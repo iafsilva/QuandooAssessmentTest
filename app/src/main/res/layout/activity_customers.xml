@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.quandoo.ivoafsilva.quandooassessment.customers.CustomersActivity">
+    tools:context="com.quandoo.ivoafsilva.quandooassessment.activities.CustomersActivity">
 
     <android.support.v7.widget.SearchView
         android:id="@+id/search_customers"

@@ -8,7 +8,7 @@
     android:focusable="true"
     android:orientation="vertical"
     android:padding="@dimen/default_padding"
-    tools:context="com.quandoo.ivoafsilva.quandooassessment.reservations.TableReservationActivity">
+    tools:context="com.quandoo.ivoafsilva.quandooassessment.activities.TableReservationActivity">
 
     <ImageView
         android:layout_width="match_parent"

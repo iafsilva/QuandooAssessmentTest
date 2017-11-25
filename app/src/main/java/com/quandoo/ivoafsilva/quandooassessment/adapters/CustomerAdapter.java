@@ -1,7 +1,6 @@
-package com.quandoo.ivoafsilva.quandooassessment.customers;
+package com.quandoo.ivoafsilva.quandooassessment.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.quandoo.ivoafsilva.quandooassessment.R;
+import com.quandoo.ivoafsilva.quandooassessment.models.CustomerModel;
 
 import java.util.ArrayList;
 import java.util.List;

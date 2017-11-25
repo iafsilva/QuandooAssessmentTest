@@ -1,12 +1,11 @@
-package com.quandoo.ivoafsilva.quandooassessment;
+package com.quandoo.ivoafsilva.quandooassessment.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.quandoo.ivoafsilva.quandooassessment.customers.CustomersActivity;
-import com.quandoo.ivoafsilva.quandooassessment.reservations.TableReservationActivity;
+import com.quandoo.ivoafsilva.quandooassessment.R;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;

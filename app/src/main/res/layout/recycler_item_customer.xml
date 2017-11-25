@@ -9,7 +9,7 @@
     android:minHeight="70dp"
     android:orientation="horizontal"
     android:padding="@dimen/default_padding"
-    tools:context="com.quandoo.ivoafsilva.quandooassessment.customers.CustomersActivity">
+    tools:context="com.quandoo.ivoafsilva.quandooassessment.activities.CustomersActivity">
 
     <ImageView
         android:layout_width="wrap_content"

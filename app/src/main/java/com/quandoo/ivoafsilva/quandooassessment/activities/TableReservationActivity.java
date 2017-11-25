@@ -1,4 +1,4 @@
-package com.quandoo.ivoafsilva.quandooassessment.reservations;
+package com.quandoo.ivoafsilva.quandooassessment.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,11 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.quandoo.ivoafsilva.quandooassessment.R;
-import com.quandoo.ivoafsilva.quandooassessment.customers.CustomerModel;
-import com.quandoo.ivoafsilva.quandooassessment.customers.CustomersActivity;
-import com.quandoo.ivoafsilva.quandooassessment.database.RealmUtils;
+import com.quandoo.ivoafsilva.quandooassessment.adapters.TableReservationAdapter;
+import com.quandoo.ivoafsilva.quandooassessment.listeners.RecyclerItemClickListener;
+import com.quandoo.ivoafsilva.quandooassessment.models.CustomerModel;
+import com.quandoo.ivoafsilva.quandooassessment.models.TableReservationModel;
 import com.quandoo.ivoafsilva.quandooassessment.network.QuandooService;
-import com.quandoo.ivoafsilva.quandooassessment.utils.RecyclerItemClickListener;
+import com.quandoo.ivoafsilva.quandooassessment.utils.RealmUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -128,7 +129,7 @@ public class TableReservationActivity extends AppCompatActivity {
         }
         //If it could not be loaded, get the tableReservations from network and handle response
         QuandooService quandooService = QuandooService.getInstance();
-        quandooService.getTableReservationsList().enqueue(new com.quandoo.ivoafsilva.quandooassessment.reservations.TableReservationActivity.TableReservationCallback(this, mTableReservationAdapter));
+        quandooService.getTableReservationsList().enqueue(new TableReservationActivity.TableReservationCallback(this, mTableReservationAdapter));
     }
 
     /**

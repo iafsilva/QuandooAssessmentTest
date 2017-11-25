@@ -1,4 +1,4 @@
-package com.quandoo.ivoafsilva.quandooassessment.reservations;
+package com.quandoo.ivoafsilva.quandooassessment.adapters;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.quandoo.ivoafsilva.quandooassessment.R;
+import com.quandoo.ivoafsilva.quandooassessment.models.TableReservationModel;
 
 import java.util.ArrayList;
 import java.util.List;

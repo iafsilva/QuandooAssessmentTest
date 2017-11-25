@@ -1,4 +1,4 @@
-package com.quandoo.ivoafsilva.quandooassessment.customers;
+package com.quandoo.ivoafsilva.quandooassessment.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,10 +13,11 @@ import android.util.Log;
 import android.view.View;
 
 import com.quandoo.ivoafsilva.quandooassessment.R;
-import com.quandoo.ivoafsilva.quandooassessment.database.RealmUtils;
+import com.quandoo.ivoafsilva.quandooassessment.adapters.CustomerAdapter;
+import com.quandoo.ivoafsilva.quandooassessment.models.CustomerModel;
+import com.quandoo.ivoafsilva.quandooassessment.utils.RealmUtils;
 import com.quandoo.ivoafsilva.quandooassessment.network.QuandooService;
-import com.quandoo.ivoafsilva.quandooassessment.reservations.TableReservationActivity;
-import com.quandoo.ivoafsilva.quandooassessment.utils.RecyclerItemClickListener;
+import com.quandoo.ivoafsilva.quandooassessment.listeners.RecyclerItemClickListener;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

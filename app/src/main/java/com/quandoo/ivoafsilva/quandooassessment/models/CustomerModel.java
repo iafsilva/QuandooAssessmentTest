@@ -1,4 +1,4 @@
-package com.quandoo.ivoafsilva.quandooassessment.customers;
+package com.quandoo.ivoafsilva.quandooassessment.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;

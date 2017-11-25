@@ -1,10 +1,10 @@
-package com.quandoo.ivoafsilva.quandooassessment.database;
+package com.quandoo.ivoafsilva.quandooassessment.utils;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.quandoo.ivoafsilva.quandooassessment.customers.CustomerModel;
-import com.quandoo.ivoafsilva.quandooassessment.reservations.TableReservationModel;
+import com.quandoo.ivoafsilva.quandooassessment.models.CustomerModel;
+import com.quandoo.ivoafsilva.quandooassessment.models.TableReservationModel;
 
 import java.util.List;
 

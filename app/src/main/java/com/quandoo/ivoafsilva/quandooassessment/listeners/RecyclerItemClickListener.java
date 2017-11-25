@@ -1,4 +1,4 @@
-package com.quandoo.ivoafsilva.quandooassessment.utils;
+package com.quandoo.ivoafsilva.quandooassessment.listeners;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
