@@ -15,12 +15,15 @@ import android.widget.Toast;
 import com.quandoo.ivoafsilva.quandooassessment.R;
 import com.quandoo.ivoafsilva.quandooassessment.customers.CustomerModel;
 import com.quandoo.ivoafsilva.quandooassessment.customers.CustomersActivity;
+import com.quandoo.ivoafsilva.quandooassessment.database.RealmUtils;
 import com.quandoo.ivoafsilva.quandooassessment.network.QuandooService;
 import com.quandoo.ivoafsilva.quandooassessment.utils.RecyclerItemClickListener;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -64,14 +67,23 @@ public class TableReservationActivity extends AppCompatActivity {
         RecyclerItemClickListener recyclerItemClickListener = new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                List<Boolean> tableReservationsList = mTableReservationAdapter.getTableReservationsList();
-                Boolean isAvailable = tableReservationsList.get(position);
-                if (!isAvailable) {
+                if (mCustomer == null) {
+                    Toast.makeText(view.getContext(), "No customer is selected.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                List<TableReservationModel> tableReservationsList = mTableReservationAdapter.getTableReservationsList();
+                final TableReservationModel table = tableReservationsList.get(position);
+                if (!table.isAvailable()) {
                     Toast.makeText(view.getContext(), "Table " + position + " is NOT available!", Toast.LENGTH_SHORT).show();
                 } else {
-                    tableReservationsList.set(position, Boolean.FALSE);
+                    RealmUtils.executeRealmTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            table.setIsAvailable(Boolean.FALSE) ;
+                        }
+                    });
                     mTableReservationAdapter.notifyItemChanged(position);
-                    Toast.makeText(view.getContext(), "Table reserved! Have a nice meal", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(view.getContext(), "Table reserved! Have a nice meal.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -87,9 +99,17 @@ public class TableReservationActivity extends AppCompatActivity {
         //Set Recycler View Properties
         mTableReservationsRecyclerView.setHasFixedSize(true);
         mTableReservationsRecyclerView.addOnItemTouchListener(recyclerItemClickListener);
-        //TODO: Load reservations from network AND CACHE
-        QuandooService quandooService = QuandooService.getInstance();
-        quandooService.getTableReservationsList().enqueue(new TableReservationCallback(this, mTableReservationAdapter));
+        //Try to load from Realm
+        List<TableReservationModel> tableReservations = RealmUtils.getTableReservations();
+        if (tableReservations == null || tableReservations.size() < 1) {
+            //Get the tableReservations lists and handle response
+            QuandooService quandooService = QuandooService.getInstance();
+            quandooService.getTableReservationsList().enqueue(new TableReservationCallback(this, mTableReservationAdapter));
+        } else {
+            mTableReservationAdapter.setTableReservationsList(tableReservations);
+        }
+
+
     }
 
     /**
@@ -99,7 +119,7 @@ public class TableReservationActivity extends AppCompatActivity {
      */
     public void loadExtrasFromIntent(Intent intent) {
         Bundle bundle = intent.getExtras();
-        if(bundle !=null) {
+        if (bundle != null) {
             mCustomer = bundle.getParcelable(CustomersActivity.KEY_CUSTOMER);
         }
     }
@@ -146,10 +166,16 @@ public class TableReservationActivity extends AppCompatActivity {
                 Log.w(TAG, "onResponse Activity does not exist. Returning.");
                 return;
             }
-            List<Boolean> body = response.body();
-            Log.d(TAG, "onResponse" + body);
-            if (body != null) {
-                mTableReservationAdapter.setTableReservationsList(body);
+            List<Boolean> reservations = response.body();
+            Log.d(TAG, "onResponse" + reservations);
+            if (reservations != null) {
+                //Convert the array of booleans to the TableReservationModel
+                List<TableReservationModel> tableReservationModel = new ArrayList<>();
+                for (int i = 0; i < reservations.size(); i++) {
+                    tableReservationModel.add(new TableReservationModel(i, reservations.get(i)));
+                }
+                mTableReservationAdapter.setTableReservationsList(tableReservationModel);
+                RealmUtils.insertTableReservations(tableReservationModel);
             }
         }
 

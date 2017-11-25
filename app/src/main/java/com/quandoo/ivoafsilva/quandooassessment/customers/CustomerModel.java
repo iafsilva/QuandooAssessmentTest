@@ -5,13 +5,17 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Model class that represents a Customer
  */
-public class CustomerModel implements Parcelable {
+public class CustomerModel extends RealmObject implements Parcelable {
     /**
      * The id of the Customer
      */
+    @PrimaryKey
     @SerializedName("id")
     private int mId;
 
@@ -58,6 +62,30 @@ public class CustomerModel implements Parcelable {
      */
     public String getCustomerLastName() {
         return mCustomerLastName;
+    }
+
+    /**
+     * Sets this customer id
+     * @param id
+     */
+    public void setId(int id) {
+        mId = id;
+    }
+
+    /**
+     * Sets the customer's first name
+     * @param customerFirstName
+     */
+    public void setCustomerFirstName(String customerFirstName) {
+        mCustomerFirstName = customerFirstName;
+    }
+
+    /**
+     * Sets the customer's last name
+     * @param customerLastName
+     */
+    public void setCustomerLastName(String customerLastName) {
+        mCustomerLastName = customerLastName;
     }
 
     /**

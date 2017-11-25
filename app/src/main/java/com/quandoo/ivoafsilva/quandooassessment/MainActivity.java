@@ -8,16 +8,27 @@ import android.view.View;
 import com.quandoo.ivoafsilva.quandooassessment.customers.CustomersActivity;
 import com.quandoo.ivoafsilva.quandooassessment.reservations.TableReservationActivity;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 public class MainActivity extends AppCompatActivity {
     /**
      * TAG to use when logging
      */
     private static final String TAG = MainActivity.class.getSimpleName();
+    /**
+     * Name for the Realm used within this app
+     */
+    public static final String REALM_NAME = "quandooAssessment.realm";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Init Realm
+        Realm.init(getApplication());
+        RealmConfiguration config = new RealmConfiguration.Builder().name(REALM_NAME).build();
+        Realm.setDefaultConfiguration(config);
     }
 
     /**

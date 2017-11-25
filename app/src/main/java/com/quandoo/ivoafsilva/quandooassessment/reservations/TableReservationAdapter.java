@@ -18,14 +18,14 @@ public class TableReservationAdapter extends RecyclerView.Adapter<TableReservati
     /**
      * The List of this Adapter. Each boolean represents if the table is available.
      */
-    private final List<Boolean> mTableReservationsList;
+    private final List<TableReservationModel> mTableReservationsList;
 
     /**
      * Constructor for this adapter
      *
      * @param tableReservationsList The list of the tables to show in this {@link RecyclerView}
      */
-    public TableReservationAdapter(List<Boolean> tableReservationsList) {
+    public TableReservationAdapter(List<TableReservationModel> tableReservationsList) {
         mTableReservationsList = new ArrayList<>();
         setTableReservationsList(tableReservationsList);
     }
@@ -40,8 +40,8 @@ public class TableReservationAdapter extends RecyclerView.Adapter<TableReservati
 
     @Override
     public void onBindViewHolder(ReservationItemViewHolder holder, int position) {
-        Boolean isAvailable = mTableReservationsList.get(position);
-        holder.bindReservation(isAvailable);
+        TableReservationModel reservation = mTableReservationsList.get(position);
+        holder.bindReservation(reservation);
     }
 
     @Override
@@ -49,11 +49,11 @@ public class TableReservationAdapter extends RecyclerView.Adapter<TableReservati
         return mTableReservationsList.size();
     }
 
-    public List<Boolean> getTableReservationsList() {
+    public List<TableReservationModel> getTableReservationsList() {
         return mTableReservationsList;
     }
 
-    public void setTableReservationsList(List<Boolean> reservationsList) {
+    public void setTableReservationsList(List<TableReservationModel> reservationsList) {
         if (reservationsList != null && reservationsList.size() > 0) {
             mTableReservationsList.clear();
             mTableReservationsList.addAll(reservationsList);
@@ -88,12 +88,12 @@ public class TableReservationAdapter extends RecyclerView.Adapter<TableReservati
         /**
          * Method to bind a reservation to this holder
          *
-         * @param isAvailable Whether the table is reserved or not
+         * @param reservation The table reservation model to be bound
          */
-        public void bindReservation(Boolean isAvailable) {
-            mTextViewTableNr.setText(String.valueOf(getAdapterPosition()));
-            mTextViewTableAvailability.setText(isAvailable.toString());
-            mTextViewTableAvailability.setBackgroundColor(isAvailable ? Color.GREEN : Color.RED);
+        public void bindReservation(TableReservationModel reservation) {
+            mTextViewTableNr.setText(String.valueOf(reservation.getId()));
+            mTextViewTableAvailability.setText(String.valueOf(reservation.isAvailable()));
+            mTextViewTableAvailability.setBackgroundColor(reservation.isAvailable() ? Color.GREEN : Color.RED);
         }
     }
 }

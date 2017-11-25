@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.quandoo.ivoafsilva.quandooassessment.R;
+import com.quandoo.ivoafsilva.quandooassessment.database.RealmUtils;
 import com.quandoo.ivoafsilva.quandooassessment.network.QuandooService;
 import com.quandoo.ivoafsilva.quandooassessment.reservations.TableReservationActivity;
 import com.quandoo.ivoafsilva.quandooassessment.utils.RecyclerItemClickListener;
@@ -76,9 +77,15 @@ public class CustomersActivity extends AppCompatActivity {
         mCustomersRecyclerView.setHasFixedSize(true);
         mCustomersRecyclerView.addOnItemTouchListener(recyclerItemClickListener);
         mCustomersRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        //Get the customers lists and handle response
-        QuandooService quandooService = QuandooService.getInstance();
-        quandooService.getCustomerList().enqueue(new CustomerCallback(this, mCustomerAdapter));
+        //Try to load from Realm
+        List<CustomerModel> customers = RealmUtils.getCustomers();
+        if (customers==null || customers.size() < 1){
+            //Get the customers lists and handle response
+            QuandooService quandooService = QuandooService.getInstance();
+            quandooService.getCustomerList().enqueue(new CustomerCallback(this, mCustomerAdapter));
+        }else{
+            mCustomerAdapter.setCustomerModelList(customers);
+        }
         //Link the SearchView to the adapter
         SearchView searchBox = findViewById(R.id.search_customers);
         searchBox.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -129,6 +136,7 @@ public class CustomersActivity extends AppCompatActivity {
             Log.d(TAG, "onResponse" + body);
             if (body != null) {
                 mCustomerAdapter.setCustomerModelList(body);
+                RealmUtils.insertCustomers(body);
             }
         }
 

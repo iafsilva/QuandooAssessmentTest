@@ -1,4 +1,9 @@
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
+
+realm {
+    syncEnabled = true
+}
 
 android {
     compileSdkVersion 27
@@ -15,7 +20,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
