@@ -1,9 +1,7 @@
 package com.quandoo.ivoafsilva.quandooassessment.customers;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.quandoo.ivoafsilva.quandooassessment.R;
-import com.quandoo.ivoafsilva.quandooassessment.reservations.TableReservationActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +20,18 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
     private final List<CustomerModel> mCustomerModelList;
 
     /**
+     * A copy of the list of this Adapter. Used when filtering.
+     */
+    private final List<CustomerModel> mCustomerModelCopy;
+
+    /**
      * Constructor for this adapter
      *
      * @param customerModelList The list of the customers to show in this {@link RecyclerView}
      */
     public CustomerAdapter(List<CustomerModel> customerModelList) {
         mCustomerModelList = new ArrayList<>();
+        mCustomerModelCopy = new ArrayList<>();
         setCustomerModelList(customerModelList);
     }
 
@@ -51,24 +54,48 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
         return mCustomerModelList.size();
     }
 
+    public List<CustomerModel> getCustomerModelList() {
+        return mCustomerModelList;
+    }
+
     /**
      * Clears the current dataset and takes a copy of the given one
+     *
      * @param customerList The new dataset to be copied
      */
-    public void setCustomerModelList(List<CustomerModel> customerList){
-        if(customerList != null && customerList.size()> 0) {
-            int oldReservationsSize = mCustomerModelList.size();
+    public void setCustomerModelList(List<CustomerModel> customerList) {
+        if (customerList != null && customerList.size() > 0) {
             mCustomerModelList.clear();
-            notifyItemRangeRemoved(0, oldReservationsSize);
             mCustomerModelList.addAll(customerList);
-            notifyItemRangeInserted(0, customerList.size());
+            mCustomerModelCopy.addAll(customerList);
+            notifyDataSetChanged();
         }
+    }
+
+    /**
+     * Filters the visible list of customers
+     * @param text The text to be filtered by
+     */
+    public void filter(String text) {
+        mCustomerModelList.clear();
+        if(text.isEmpty()){
+            mCustomerModelList.addAll(mCustomerModelCopy);
+        } else{
+            text = text.toLowerCase();
+            for(CustomerModel customer: mCustomerModelCopy){
+                if(customer.getCustomerFirstName().toLowerCase().contains(text)
+                        || customer.getCustomerLastName().toLowerCase().contains(text)){
+                    mCustomerModelList.add(customer);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 
     /**
      * View Holder for each customer entry
      */
-    public static class CustomerItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class CustomerItemViewHolder extends RecyclerView.ViewHolder {
         /**
          * {@link TextView} to hold the value of the customer's Id
          */
@@ -89,7 +116,6 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
          */
         public CustomerItemViewHolder(View view) {
             super(view);
-            view.setOnClickListener(this);
             mTextViewId = view.findViewById(R.id.text_id);
             mTextViewFirstName = view.findViewById(R.id.text_first_name);
             mTextViewLastName = view.findViewById(R.id.text_last_name);
@@ -105,20 +131,6 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
             mTextViewId.setText(String.valueOf(customer.getId()));
             mTextViewFirstName.setText(customer.getCustomerFirstName());
             mTextViewLastName.setText(customer.getCustomerLastName());
-        }
-
-        /**
-         * Method called when an item is clicked
-         *
-         * @param view The item that is clicked
-         */
-        @Override
-        public void onClick(View view) {
-            Intent intent = new Intent(view.getContext(), TableReservationActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(CustomersActivity.KEY_CUSTOMER, (Parcelable) mTextViewId.getTag());
-            intent.putExtras(bundle);
-            view.getContext().startActivity(intent);
         }
     }
 }

@@ -86,7 +86,7 @@ public final class QuandooService {
         /**
          * Get customers list
          * <p>
-         * URL: https://s3-eu-west-1.amazonaws.com/quandoo-assessment/customer-list.json
+         * URL: QUANDOO_BASE_URL/customer-list.json
          * Path: quandoo-assessment/customer-list.json
          *
          * @return Array of customers.
@@ -97,7 +97,7 @@ public final class QuandooService {
         /**
          * Get reservations table map
          * <p>
-         * URL: https://s3-eu-west-1.amazonaws.com/quandoo-assessment/table-map.json
+         * URL: QUANDOO_BASE_URL/table-map.json
          * Path: quandoo-assessment/table-map.json
          *
          * @return Array of booleans each representing table availability.

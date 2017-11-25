@@ -10,13 +10,15 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.quandoo.ivoafsilva.quandooassessment.R;
 import com.quandoo.ivoafsilva.quandooassessment.customers.CustomerModel;
 import com.quandoo.ivoafsilva.quandooassessment.customers.CustomersActivity;
 import com.quandoo.ivoafsilva.quandooassessment.network.QuandooService;
+import com.quandoo.ivoafsilva.quandooassessment.utils.RecyclerItemClickListener;
 
-import java.util.ArrayList;
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import retrofit2.Call;
@@ -29,9 +31,13 @@ public class TableReservationActivity extends AppCompatActivity {
      */
     private static final String TAG = TableReservationActivity.class.getSimpleName();
     /**
-     * The list of table reservations
+     * Numbers of columns to be displayed
      */
-    private ArrayList<Boolean> mTableReservationsList;
+    public static final int NR_COLUMNS = 3;
+    /**
+     * The customer that is trying to reserve a table
+     */
+    private CustomerModel mCustomer;
     /**
      * The {@link RecyclerView} that will represent the reservations
      */
@@ -44,47 +50,46 @@ public class TableReservationActivity extends AppCompatActivity {
      * The {@link RecyclerView.Adapter} of the mTableReservationsRecyclerView
      */
     private TableReservationAdapter mTableReservationAdapter;
-    /**
-     * The customer that is trying to reserve a table
-     */
-    private CustomerModel mCustomer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_table_reservation);
-
+        //Retrieve extras from the bundle
         loadExtrasFromIntent(getIntent());
-        bindCustomerToReservingCustomerView(mCustomer);
-        //TODO: Load reservations from network AND CACHE
-        QuandooService quandooService = QuandooService.getInstance();
-        quandooService.getTableReservationsList().enqueue(new Callback<List<Boolean>>() {
+        if (mCustomer != null) {
+            bindCustomerToReservingCustomerView(mCustomer);
+        }
+        //Create click listener
+        RecyclerItemClickListener recyclerItemClickListener = new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
-            public void onResponse(@NonNull Call<List<Boolean>> call, @NonNull Response<List<Boolean>> response) {
-                Log.d(TAG, "getTableReservationsList | onResponse");
-                mTableReservationsList = (ArrayList<Boolean>) response.body();
-                if (mTableReservationsList == null) {
-                    Log.w(TAG, "getTableReservationsList returned NULL response");
-                    return;
+            public void onItemClick(View view, int position) {
+                List<Boolean> tableReservationsList = mTableReservationAdapter.getTableReservationsList();
+                Boolean isAvailable = tableReservationsList.get(position);
+                if (!isAvailable) {
+                    Toast.makeText(view.getContext(), "Table " + position + " is NOT available!", Toast.LENGTH_SHORT).show();
+                } else {
+                    tableReservationsList.set(position, Boolean.FALSE);
+                    mTableReservationAdapter.notifyItemChanged(position);
+                    Toast.makeText(view.getContext(), "Table reserved! Have a nice meal", Toast.LENGTH_SHORT).show();
                 }
-                Log.w(TAG, "getTableReservationsList" + mTableReservationsList.toString());
-                mTableReservationAdapter.setTableReservationsList(mTableReservationsList);
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<List<Boolean>> call, @NonNull Throwable t) {
-                Log.e(TAG, "getTableReservationsList | onFailure", t);
             }
         });
-
+        //Get the recycler view
         mTableReservationsRecyclerView = findViewById(R.id.recycler_reservations);
         mTableReservationsRecyclerView.setHasFixedSize(true);
         //Set Layout Manager
-        mLayoutManager = new GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false);
+        mLayoutManager = new GridLayoutManager(this, NR_COLUMNS, LinearLayoutManager.VERTICAL, false);
         mTableReservationsRecyclerView.setLayoutManager(mLayoutManager);
         //Set Adapter
-        mTableReservationAdapter = new TableReservationAdapter(mTableReservationsList);
+        mTableReservationAdapter = new TableReservationAdapter(null);
         mTableReservationsRecyclerView.setAdapter(mTableReservationAdapter);
+        //Set Recycler View Properties
+        mTableReservationsRecyclerView.setHasFixedSize(true);
+        mTableReservationsRecyclerView.addOnItemTouchListener(recyclerItemClickListener);
+        //TODO: Load reservations from network AND CACHE
+        QuandooService quandooService = QuandooService.getInstance();
+        quandooService.getTableReservationsList().enqueue(new TableReservationCallback(this, mTableReservationAdapter));
     }
 
     /**
@@ -94,7 +99,9 @@ public class TableReservationActivity extends AppCompatActivity {
      */
     public void loadExtrasFromIntent(Intent intent) {
         Bundle bundle = intent.getExtras();
-        mCustomer = bundle.getParcelable(CustomersActivity.KEY_CUSTOMER);
+        if(bundle !=null) {
+            mCustomer = bundle.getParcelable(CustomersActivity.KEY_CUSTOMER);
+        }
     }
 
     /**
@@ -107,5 +114,48 @@ public class TableReservationActivity extends AppCompatActivity {
         ((TextView) view.findViewById(R.id.text_id)).setText(String.valueOf(customer.getId()));
         ((TextView) view.findViewById(R.id.text_first_name)).setText(customer.getCustomerFirstName());
         ((TextView) view.findViewById(R.id.text_last_name)).setText(customer.getCustomerLastName());
+        view.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        QuandooService.getInstance().getTableReservationsList().cancel();
+    }
+
+    //------------------ INNER CLASSES ----------------
+
+    private static class TableReservationCallback implements Callback<List<Boolean>> {
+        /**
+         * TAG to use when logging
+         */
+        private static final String TAG = TableReservationCallback.class.getSimpleName();
+
+        private WeakReference<TableReservationActivity> mActivityReference;
+
+        private TableReservationAdapter mTableReservationAdapter;
+
+        public TableReservationCallback(TableReservationActivity activity, TableReservationAdapter tableReservationAdapter) {
+            mActivityReference = new WeakReference<>(activity);
+            mTableReservationAdapter = tableReservationAdapter;
+        }
+
+        @Override
+        public void onResponse(@NonNull Call<List<Boolean>> call, @NonNull Response<List<Boolean>> response) {
+            if (mActivityReference.get() == null) {
+                Log.w(TAG, "onResponse Activity does not exist. Returning.");
+                return;
+            }
+            List<Boolean> body = response.body();
+            Log.d(TAG, "onResponse" + body);
+            if (body != null) {
+                mTableReservationAdapter.setTableReservationsList(body);
+            }
+        }
+
+        @Override
+        public void onFailure(@NonNull Call<List<Boolean>> call, @NonNull Throwable t) {
+            Log.e(TAG, "onFailure", t);
+        }
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 
 public class TableReservationAdapter extends RecyclerView.Adapter<TableReservationAdapter.ReservationItemViewHolder> {
     /**
-     * The List of this Adapter
+     * The List of this Adapter. Each boolean represents if the table is available.
      */
     private final List<Boolean> mTableReservationsList;
 
@@ -49,20 +49,22 @@ public class TableReservationAdapter extends RecyclerView.Adapter<TableReservati
         return mTableReservationsList.size();
     }
 
-    public void setTableReservationsList(List<Boolean> reservationsList){
-        if(reservationsList != null && reservationsList.size()> 0) {
-            int oldReservationsSize = mTableReservationsList.size();
+    public List<Boolean> getTableReservationsList() {
+        return mTableReservationsList;
+    }
+
+    public void setTableReservationsList(List<Boolean> reservationsList) {
+        if (reservationsList != null && reservationsList.size() > 0) {
             mTableReservationsList.clear();
-            notifyItemRangeRemoved(0, oldReservationsSize);
             mTableReservationsList.addAll(reservationsList);
-            notifyItemRangeInserted(0, reservationsList.size());
+            notifyDataSetChanged();
         }
     }
 
     /**
      * View Holder for each customer entry
      */
-    public static class ReservationItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ReservationItemViewHolder extends RecyclerView.ViewHolder {
         /**
          * {@link TextView} to hold the number of the table
          */
@@ -79,7 +81,6 @@ public class TableReservationAdapter extends RecyclerView.Adapter<TableReservati
          */
         public ReservationItemViewHolder(View view) {
             super(view);
-            view.setOnClickListener(this);
             mTextViewTableNr = view.findViewById(R.id.text_table_nr);
             mTextViewTableAvailability = view.findViewById(R.id.text_table_availability);
         }
@@ -93,23 +94,6 @@ public class TableReservationAdapter extends RecyclerView.Adapter<TableReservati
             mTextViewTableNr.setText(String.valueOf(getAdapterPosition()));
             mTextViewTableAvailability.setText(isAvailable.toString());
             mTextViewTableAvailability.setBackgroundColor(isAvailable ? Color.GREEN : Color.RED);
-        }
-
-        /**
-         * Method called when an item is clicked
-         *
-         * @param view The item that is clicked
-         */
-        @Override
-        public void onClick(View view) {
-            if(Boolean.valueOf(mTextViewTableAvailability.getText().toString()).equals(Boolean.FALSE)) {
-                Toast.makeText(view.getContext(), "Table " + getAdapterPosition() + " is NOT available!", Toast.LENGTH_SHORT).show();
-            } else {
-                mTextViewTableNr.setText(String.valueOf(getAdapterPosition()));
-                mTextViewTableAvailability.setText(Boolean.FALSE.toString());
-                mTextViewTableAvailability.setBackgroundColor(Color.RED);
-                Toast.makeText(view.getContext(), "Table reserved!", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 }
