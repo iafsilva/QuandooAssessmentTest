@@ -2,6 +2,7 @@ package com.quandoo.ivoafsilva.quandooassessment.customers;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -18,6 +19,7 @@ import com.quandoo.ivoafsilva.quandooassessment.reservations.TableReservationAct
 import com.quandoo.ivoafsilva.quandooassessment.utils.RecyclerItemClickListener;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -49,11 +51,17 @@ public class CustomersActivity extends AppCompatActivity {
      * The {@link android.support.v7.widget.RecyclerView.Adapter} to use for the mCustomersRecyclerView
      */
     private CustomerAdapter mCustomerAdapter;
+    /**
+     * The customer model list that will be added to the adapter.
+     */
+    private static List<CustomerModel> mCustomerModelList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customers);
+        //Retrieve state from the bundle
+        loadStateFromBundle(getIntent(), savedInstanceState);
         //Create click listener
         RecyclerItemClickListener recyclerItemClickListener = new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
@@ -77,15 +85,6 @@ public class CustomersActivity extends AppCompatActivity {
         mCustomersRecyclerView.setHasFixedSize(true);
         mCustomersRecyclerView.addOnItemTouchListener(recyclerItemClickListener);
         mCustomersRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        //Try to load from Realm
-        List<CustomerModel> customers = RealmUtils.getCustomers();
-        if (customers==null || customers.size() < 1){
-            //Get the customers lists and handle response
-            QuandooService quandooService = QuandooService.getInstance();
-            quandooService.getCustomerList().enqueue(new CustomerCallback(this, mCustomerAdapter));
-        }else{
-            mCustomerAdapter.setCustomerModelList(customers);
-        }
         //Link the SearchView to the adapter
         SearchView searchBox = findViewById(R.id.search_customers);
         searchBox.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -101,6 +100,50 @@ public class CustomersActivity extends AppCompatActivity {
                 return true;
             }
         });
+        //Load data
+        loadCustomersList();
+    }
+
+    /**
+     * Method to load customers list from different sources
+     */
+    private void loadCustomersList() {
+        if (mCustomerModelList != null && mCustomerModelList.size() > 0) {
+            //Loaded from last state
+            mCustomerAdapter.setCustomerModelList(mCustomerModelList);
+            return;
+        }
+        mCustomerModelList = RealmUtils.getCustomers();
+        if (mCustomerModelList != null && mCustomerModelList.size() > 0) {
+            //Loaded from Realm
+            mCustomerAdapter.setCustomerModelList(mCustomerModelList);
+            return;
+        }
+        //Get the customers from network and handle response
+        QuandooService quandooService = QuandooService.getInstance();
+        quandooService.getCustomerList().enqueue(new CustomerCallback(this, mCustomerAdapter));
+    }
+
+    /**
+     * Loads from bundle into the classes' fields
+     *
+     * @param intent             The intent received to get the extras from
+     * @param savedInstanceState The savedInstanceState to get the extras from
+     */
+    public void loadStateFromBundle(Intent intent, Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            savedInstanceState = intent.getExtras();
+        }
+
+        if (savedInstanceState != null) {
+            mCustomerModelList = savedInstanceState.getParcelableArrayList(KEY_CUSTOMER_LIST);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(KEY_CUSTOMER_LIST, (ArrayList<? extends Parcelable>) mCustomerAdapter.getCustomerModelList());
     }
 
     @Override
@@ -132,11 +175,11 @@ public class CustomersActivity extends AppCompatActivity {
                 Log.w(TAG, "onResponse Activity does not exist. Returning.");
                 return;
             }
-            List<CustomerModel> body = response.body();
-            Log.d(TAG, "onResponse" + body);
-            if (body != null) {
-                mCustomerAdapter.setCustomerModelList(body);
-                RealmUtils.insertCustomers(body);
+            mCustomerModelList = response.body();
+            Log.d(TAG, "onResponse" + mCustomerModelList);
+            if (mCustomerModelList != null) {
+                mCustomerAdapter.setCustomerModelList(mCustomerModelList);
+                RealmUtils.insertCustomers(mCustomerModelList);
             }
         }
 

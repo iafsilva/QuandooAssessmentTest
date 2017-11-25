@@ -2,6 +2,7 @@ package com.quandoo.ivoafsilva.quandooassessment.reservations;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -38,6 +39,10 @@ public class TableReservationActivity extends AppCompatActivity {
      */
     public static final int NR_COLUMNS = 3;
     /**
+     * Key to use when sending/retrieving the reservations list from a bundle
+     */
+    public static final String KEY_RESERVATIONS_LIST = "reservationsList";
+    /**
      * The customer that is trying to reserve a table
      */
     private CustomerModel mCustomer;
@@ -53,13 +58,17 @@ public class TableReservationActivity extends AppCompatActivity {
      * The {@link RecyclerView.Adapter} of the mTableReservationsRecyclerView
      */
     private TableReservationAdapter mTableReservationAdapter;
+    /**
+     * The table reservations list that will be added to the adapter
+     */
+    private List<TableReservationModel> mTableReservations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_table_reservation);
-        //Retrieve extras from the bundle
-        loadExtrasFromIntent(getIntent());
+        //Retrieve state from the bundle
+        loadStateFromBundle(getIntent(), savedInstanceState);
         if (mCustomer != null) {
             bindCustomerToReservingCustomerView(mCustomer);
         }
@@ -79,7 +88,7 @@ public class TableReservationActivity extends AppCompatActivity {
                     RealmUtils.executeRealmTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
-                            table.setIsAvailable(Boolean.FALSE) ;
+                            table.setIsAvailable(Boolean.FALSE);
                         }
                     });
                     mTableReservationAdapter.notifyItemChanged(position);
@@ -99,29 +108,27 @@ public class TableReservationActivity extends AppCompatActivity {
         //Set Recycler View Properties
         mTableReservationsRecyclerView.setHasFixedSize(true);
         mTableReservationsRecyclerView.addOnItemTouchListener(recyclerItemClickListener);
-        //Try to load from Realm
-        List<TableReservationModel> tableReservations = RealmUtils.getTableReservations();
-        if (tableReservations == null || tableReservations.size() < 1) {
-            //Get the tableReservations lists and handle response
-            QuandooService quandooService = QuandooService.getInstance();
-            quandooService.getTableReservationsList().enqueue(new TableReservationCallback(this, mTableReservationAdapter));
-        } else {
-            mTableReservationAdapter.setTableReservationsList(tableReservations);
-        }
-
-
+        loadTableReservations();
     }
 
     /**
-     * Retrieves and loads necessary extras into the classes' fields
-     *
-     * @param intent The intent received to get the extras from
+     * Method to load table reservations from different sources
      */
-    public void loadExtrasFromIntent(Intent intent) {
-        Bundle bundle = intent.getExtras();
-        if (bundle != null) {
-            mCustomer = bundle.getParcelable(CustomersActivity.KEY_CUSTOMER);
+    private void loadTableReservations() {
+        if (mTableReservations != null && mTableReservations.size() > 0) {
+            //Loaded from last state
+            mTableReservationAdapter.setTableReservationsList(mTableReservations);
+            return;
         }
+        mTableReservations = RealmUtils.getTableReservations();
+        if (mTableReservations != null && mTableReservations.size() > 0) {
+            //Loaded from Realm
+            mTableReservationAdapter.setTableReservationsList(mTableReservations);
+            return;
+        }
+        //If it could not be loaded, get the tableReservations from network and handle response
+        QuandooService quandooService = QuandooService.getInstance();
+        quandooService.getTableReservationsList().enqueue(new com.quandoo.ivoafsilva.quandooassessment.reservations.TableReservationActivity.TableReservationCallback(this, mTableReservationAdapter));
     }
 
     /**
@@ -135,6 +142,30 @@ public class TableReservationActivity extends AppCompatActivity {
         ((TextView) view.findViewById(R.id.text_first_name)).setText(customer.getCustomerFirstName());
         ((TextView) view.findViewById(R.id.text_last_name)).setText(customer.getCustomerLastName());
         view.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Retrieves and loads necessary extras into the classes' fields
+     *
+     * @param intent             The intent received to get the extras from
+     * @param savedInstanceState The savedInstanceState to get the extras from
+     */
+    public void loadStateFromBundle(Intent intent, Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            savedInstanceState = intent.getExtras();
+        }
+
+        if (savedInstanceState != null) {
+            mCustomer = savedInstanceState.getParcelable(CustomersActivity.KEY_CUSTOMER);
+            mTableReservations = savedInstanceState.getParcelableArrayList(KEY_RESERVATIONS_LIST);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(CustomersActivity.KEY_CUSTOMER, mCustomer);
+        outState.putParcelableArrayList(KEY_RESERVATIONS_LIST, (ArrayList<? extends Parcelable>) mTableReservationAdapter.getTableReservationsList());
     }
 
     @Override
