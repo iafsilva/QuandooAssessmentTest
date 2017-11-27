@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.evernote.android.job.JobManager;
 import com.quandoo.ivoafsilva.quandooassessment.R;
+import com.quandoo.ivoafsilva.quandooassessment.background.ClearReservationsJob;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -18,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Name for the Realm used within this app
      */
-    public static final String REALM_NAME = "quandooAssessment.realm";
+    private static final String REALM_NAME = "quandooAssessment.realm";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         Realm.init(getApplication());
         RealmConfiguration config = new RealmConfiguration.Builder().name(REALM_NAME).build();
         Realm.setDefaultConfiguration(config);
+        //Init background job
+        JobManager.instance().schedule(ClearReservationsJob.buildJobRequest());
     }
 
     /**

@@ -99,15 +99,15 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
         /**
          * {@link TextView} to hold the value of the customer's Id
          */
-        private TextView mTextViewId;
+        private final TextView mTextViewId;
         /**
          * {@link TextView} to hold the value of the customer's First Name
          */
-        private TextView mTextViewFirstName;
+        private final TextView mTextViewFirstName;
         /**
          * {@link TextView} to hold the value of the customer's Last Name
          */
-        private TextView mTextViewLastName;
+        private final TextView mTextViewLastName;
 
         /**
          * Constructor for this Holder

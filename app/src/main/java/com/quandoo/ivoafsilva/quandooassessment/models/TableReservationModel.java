@@ -11,6 +11,17 @@ import io.realm.annotations.PrimaryKey;
  */
 public class TableReservationModel extends RealmObject implements Parcelable {
     /**
+     * The label to use when the table is not available
+     */
+    public static final String LABEL_RESERVED = "Reserved";
+    /**
+     * The label to use when the table is available
+     */
+    public static final String LABEL_AVAILABLE = "Available";
+
+    //------------------------ FIELDS --------------------------
+
+    /**
      * The id (or number) of the table
      */
     @PrimaryKey
@@ -48,7 +59,7 @@ public class TableReservationModel extends RealmObject implements Parcelable {
     /**
      * Sets this table id
      *
-     * @param id
+     * @param id The id to be set
      */
     public void setId(int id) {
         mId = id;

@@ -88,7 +88,7 @@ public class TableReservationActivity extends AppCompatActivity {
                 } else {
                     RealmUtils.executeRealmTransaction(new Realm.Transaction() {
                         @Override
-                        public void execute(Realm realm) {
+                        public void execute(@NonNull Realm realm) {
                             table.setIsAvailable(Boolean.FALSE);
                         }
                     });
@@ -137,7 +137,7 @@ public class TableReservationActivity extends AppCompatActivity {
      *
      * @param customer The customer to be bound
      */
-    public void bindCustomerToReservingCustomerView(CustomerModel customer) {
+    private void bindCustomerToReservingCustomerView(CustomerModel customer) {
         View view = findViewById(R.id.reserving_customer);
         ((TextView) view.findViewById(R.id.text_id)).setText(String.valueOf(customer.getId()));
         ((TextView) view.findViewById(R.id.text_first_name)).setText(customer.getCustomerFirstName());
@@ -151,7 +151,7 @@ public class TableReservationActivity extends AppCompatActivity {
      * @param intent             The intent received to get the extras from
      * @param savedInstanceState The savedInstanceState to get the extras from
      */
-    public void loadStateFromBundle(Intent intent, Bundle savedInstanceState) {
+    private void loadStateFromBundle(Intent intent, Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             savedInstanceState = intent.getExtras();
         }
@@ -183,9 +183,9 @@ public class TableReservationActivity extends AppCompatActivity {
          */
         private static final String TAG = TableReservationCallback.class.getSimpleName();
 
-        private WeakReference<TableReservationActivity> mActivityReference;
+        private final WeakReference<TableReservationActivity> mActivityReference;
 
-        private TableReservationAdapter mTableReservationAdapter;
+        private final TableReservationAdapter mTableReservationAdapter;
 
         public TableReservationCallback(TableReservationActivity activity, TableReservationAdapter tableReservationAdapter) {
             mActivityReference = new WeakReference<>(activity);

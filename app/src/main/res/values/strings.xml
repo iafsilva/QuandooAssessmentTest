@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">QuandooAssessment</string>
-    <string name="btn_show_customers">Show Customers</string>
-    <string name="btn_show_reservations">Show Table Reservations</string>
-    <string name="title_activity_customers">CustomersActivity</string>
+    <string name="btn_show_customers">Customers</string>
+    <string name="btn_show_reservations">Table Reservations</string>
 </resources>

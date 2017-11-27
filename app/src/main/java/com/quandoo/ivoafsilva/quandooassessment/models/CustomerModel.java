@@ -66,7 +66,7 @@ public class CustomerModel extends RealmObject implements Parcelable {
 
     /**
      * Sets this customer id
-     * @param id
+     * @param id The id to be set
      */
     public void setId(int id) {
         mId = id;
@@ -74,7 +74,7 @@ public class CustomerModel extends RealmObject implements Parcelable {
 
     /**
      * Sets the customer's first name
-     * @param customerFirstName
+     * @param customerFirstName the customer first name to be set
      */
     public void setCustomerFirstName(String customerFirstName) {
         mCustomerFirstName = customerFirstName;
@@ -82,7 +82,7 @@ public class CustomerModel extends RealmObject implements Parcelable {
 
     /**
      * Sets the customer's last name
-     * @param customerLastName
+     * @param customerLastName the customer last name to be set
      */
     public void setCustomerLastName(String customerLastName) {
         mCustomerLastName = customerLastName;

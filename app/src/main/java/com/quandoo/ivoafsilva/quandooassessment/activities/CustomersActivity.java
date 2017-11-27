@@ -131,7 +131,7 @@ public class CustomersActivity extends AppCompatActivity {
      * @param intent             The intent received to get the extras from
      * @param savedInstanceState The savedInstanceState to get the extras from
      */
-    public void loadStateFromBundle(Intent intent, Bundle savedInstanceState) {
+    private void loadStateFromBundle(Intent intent, Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             savedInstanceState = intent.getExtras();
         }
@@ -161,9 +161,9 @@ public class CustomersActivity extends AppCompatActivity {
          */
         private static final String TAG = CustomersActivity.class.getSimpleName();
 
-        private WeakReference<CustomersActivity> mActivityReference;
+        private final WeakReference<CustomersActivity> mActivityReference;
 
-        private CustomerAdapter mCustomerAdapter;
+        private final CustomerAdapter mCustomerAdapter;
 
         public CustomerCallback(CustomersActivity activity, CustomerAdapter customerAdapter) {
             mActivityReference = new WeakReference<>(activity);

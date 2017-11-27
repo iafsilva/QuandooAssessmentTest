@@ -13,6 +13,7 @@ import com.quandoo.ivoafsilva.quandooassessment.models.TableReservationModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class TableReservationAdapter extends RecyclerView.Adapter<TableReservationAdapter.ReservationItemViewHolder> {
     /**
@@ -68,11 +69,11 @@ public class TableReservationAdapter extends RecyclerView.Adapter<TableReservati
         /**
          * {@link TextView} to hold the number of the table
          */
-        private TextView mTextViewTableNr;
+        private final TextView mTextViewTableNr;
         /**
          * {@link TextView} to hold the availability of the table
          */
-        private TextView mTextViewTableAvailability;
+        private final TextView mTextViewTableAvailability;
 
         /**
          * Constructor for this Holder
@@ -91,9 +92,10 @@ public class TableReservationAdapter extends RecyclerView.Adapter<TableReservati
          * @param reservation The table reservation model to be bound
          */
         public void bindReservation(TableReservationModel reservation) {
-            mTextViewTableNr.setText(String.valueOf(reservation.getId()));
-            mTextViewTableAvailability.setText(String.valueOf(reservation.isAvailable()));
-            mTextViewTableAvailability.setBackgroundColor(reservation.isAvailable() ? Color.GREEN : Color.RED);
+            String label_text = String.format(Locale.ENGLISH, "Table #%d", reservation.getId());
+            mTextViewTableNr.setText(label_text);
+            mTextViewTableAvailability.setText(reservation.isAvailable() ? TableReservationModel.LABEL_AVAILABLE : TableReservationModel.LABEL_RESERVED);
+            mTextViewTableAvailability.setTextColor(reservation.isAvailable() ? Color.GREEN : Color.RED);
         }
     }
 }
