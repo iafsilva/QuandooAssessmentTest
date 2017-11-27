@@ -4,13 +4,13 @@
 
 We need an application to make reservations in a restaurant
 
-##Workflow
+## Workflow
 
 The waiter opens the app, chooses a customer from a list, the app navigates him to a table choosing screen.
 The waiter chooses the table and the app highlights the chosen table.
 Every 15 minutes all reservations have to be removed even if the application is closed.
 
-##Requirements
+## Requirements
 
 1. Tables have to be represented as cells on grid
 2. Available and unavailable tables have to be easily recognized
@@ -18,11 +18,11 @@ Every 15 minutes all reservations have to be removed even if the application is 
 4. Search option for customers would be a plus
 5. Any unspecified details are left to your imagination
 
-##Implementation
+## Implementation
 
 * Android Native Code with MVC architecture
 
-##Dependencies
+## Dependencies
 
 1. GSON
 
@@ -36,10 +36,10 @@ Every 15 minutes all reservations have to be removed even if the application is 
 
     To create and schedule the required Job, in any API level, without the need for Google Play Store.
 
-##Screenshots
+## Screenshots
 
-<img src="https://github.com/iafsilva/QuandooAssessmentTest/screenshots/screen_customers" width="300">
+<img src="https://github.com/iafsilva/QuandooAssessmentTest/blob/master/screenshots/screen_customers.png" width="300">
 
-<img src="https://github.com/iafsilva/QuandooAssessmentTest/screenshots/screen_customers_search" width="300">
+<img src="https://github.com/iafsilva/QuandooAssessmentTest/blob/master/screenshots/screen_customers_search.png" width="300">
 
-<img src="https://github.com/iafsilva/QuandooAssessmentTest/screenshots/screen_tables" width="300">
+<img src="https://github.com/iafsilva/QuandooAssessmentTest/blob/master/screenshots/screen_tables.png" width="300">
