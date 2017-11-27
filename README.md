@@ -34,7 +34,7 @@ Every 15 minutes all reservations have to be removed even if the application is 
 
 3. Android-Job
 
-    To create and schedule the required Job, in any API level, without the need for Google Play Store.
+    To create and schedule the required Job, in any API level, without the need for Google Play Services.
 
 ## Screenshots
 
