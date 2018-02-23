@@ -1,4 +1,4 @@
-# Quandoo Candidate Task
+# Quandoo Task
 
 ## The Task
 
